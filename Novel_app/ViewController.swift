@@ -6,13 +6,23 @@
 //
 
 import UIKit
+import FirebaseCore
+import FirebaseFirestore
+import FirebaseAuth
+
+
 
 class ViewController: UIViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+
+       //AddPostTable(UserID: "test", ThemeID: "test", PostTxt: "疲れたなあああああ", Range:0)
+    
     }
+    
+
+    
 
 
 }
