@@ -8,22 +8,28 @@
 import UIKit
 
 class PostViewController: UIViewController {
-
+    
+    @IBOutlet var textview :UITextView!
+    @IBOutlet var ConfirmButton :UIButton!
+    var inputData: String?
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        
+        //ConfirmButton.isEnabled = false
+        textview.becomeFirstResponder()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    
+    @IBAction func ConfirmButtonTapped(){
+        let inputData = textview.text
+        //print("入力された\(inputData ?? "")")
+        let nextView = storyboard?.instantiateViewController(withIdentifier: "ConfirmViewController") as! ConfirmViewController
+        nextView.ReceivedData = inputData!
+        nextView.modalPresentationStyle = .fullScreen
+        present(nextView, animated: true, completion: nil)
+        
     }
-    */
-
 }
+

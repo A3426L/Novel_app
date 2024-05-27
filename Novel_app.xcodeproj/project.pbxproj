@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		722CD3FF2C02206F001A8793 /* PostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 722CD3FE2C02206E001A8793 /* PostViewController.swift */; };
+		722CD4012C022AB2001A8793 /* ConfirmViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 722CD4002C022AB2001A8793 /* ConfirmViewController.swift */; };
 		72313BC62BFF7A0600F26806 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72313BC52BFF7A0600F26806 /* AppDelegate.swift */; };
 		72313BC82BFF7A0600F26806 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72313BC72BFF7A0600F26806 /* SceneDelegate.swift */; };
 		72313BCA2BFF7A0600F26806 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72313BC92BFF7A0600F26806 /* ViewController.swift */; };
@@ -17,9 +19,12 @@
 		72313BDE2BFF804C00F26806 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 72313BDD2BFF804C00F26806 /* FirebaseAuth */; };
 		72313BE02BFF80F100F26806 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 72313BDF2BFF80F100F26806 /* FirebaseFirestore */; };
 		72313BE22C00ADD900F26806 /* DataBaseControll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72313BE12C00ADD900F26806 /* DataBaseControll.swift */; };
+		7255CEE22C04B75100DDDF39 /* FriendsPostsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7255CEE12C04B75100DDDF39 /* FriendsPostsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		722CD3FE2C02206E001A8793 /* PostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewController.swift; sourceTree = "<group>"; };
+		722CD4002C022AB2001A8793 /* ConfirmViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmViewController.swift; sourceTree = "<group>"; };
 		72313BC22BFF7A0600F26806 /* Novel_app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Novel_app.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		72313BC52BFF7A0600F26806 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		72313BC72BFF7A0600F26806 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -30,6 +35,7 @@
 		72313BD32BFF7A0700F26806 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		72313BD92BFF7D1000F26806 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		72313BE12C00ADD900F26806 /* DataBaseControll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBaseControll.swift; sourceTree = "<group>"; };
+		7255CEE12C04B75100DDDF39 /* FriendsPostsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsPostsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +75,9 @@
 				72313BC52BFF7A0600F26806 /* AppDelegate.swift */,
 				72313BC72BFF7A0600F26806 /* SceneDelegate.swift */,
 				72313BC92BFF7A0600F26806 /* ViewController.swift */,
+				722CD3FE2C02206E001A8793 /* PostViewController.swift */,
+				722CD4002C022AB2001A8793 /* ConfirmViewController.swift */,
+				7255CEE12C04B75100DDDF39 /* FriendsPostsViewController.swift */,
 				72313BE12C00ADD900F26806 /* DataBaseControll.swift */,
 				72313BCB2BFF7A0600F26806 /* Main.storyboard */,
 				72313BCE2BFF7A0700F26806 /* Assets.xcassets */,
@@ -167,7 +176,10 @@
 				72313BCA2BFF7A0600F26806 /* ViewController.swift in Sources */,
 				72313BE22C00ADD900F26806 /* DataBaseControll.swift in Sources */,
 				72313BC62BFF7A0600F26806 /* AppDelegate.swift in Sources */,
+				722CD4012C022AB2001A8793 /* ConfirmViewController.swift in Sources */,
 				72313BC82BFF7A0600F26806 /* SceneDelegate.swift in Sources */,
+				7255CEE22C04B75100DDDF39 /* FriendsPostsViewController.swift in Sources */,
+				722CD3FF2C02206F001A8793 /* PostViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

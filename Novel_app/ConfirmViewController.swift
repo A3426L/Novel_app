@@ -8,22 +8,19 @@
 import UIKit
 
 class ConfirmViewController: UIViewController {
+    
+    @IBOutlet var PostButton:UIButton!
+    @IBOutlet var Label:UILabel!
 
+    var ReceivedData = ""
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        Label.text = ReceivedData
+        print(ReceivedData)
     }
+
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
+    
 
 }

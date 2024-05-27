@@ -16,14 +16,10 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
        //AddPostTable(UserID: "test", ThemeID: "test", PostTxt: "疲れたなあああああ", Range:0)
+        
     
     }
     
-
-    
-
-
 }
 
