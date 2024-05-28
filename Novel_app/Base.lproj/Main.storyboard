@@ -113,7 +113,7 @@
         <scene sceneID="jeZ-bZ-LIn">
             <objects>
                 <viewController storyboardIdentifier="FriendsPostsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="mJs-Xj-2Cq" customClass="FriendsPostsViewController" customModule="Novel_app" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="N9T-aA-VBW" customClass="Fri">
+                    <view key="view" contentMode="scaleToFill" id="N9T-aA-VBW">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
@@ -180,9 +180,9 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
                     <connections>
-                        <segue destination="mJs-Xj-2Cq" kind="relationship" relationship="viewControllers" id="pf7-ry-Hto"/>
                         <segue destination="Aqk-Tn-e9y" kind="relationship" relationship="viewControllers" id="A0m-wK-pLC"/>
                         <segue destination="gPG-tK-dsD" kind="relationship" relationship="viewControllers" id="xAr-1r-nYi"/>
+                        <segue destination="mJs-Xj-2Cq" kind="relationship" relationship="viewControllers" id="9UG-s0-H6z"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fdw-pv-Hgq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

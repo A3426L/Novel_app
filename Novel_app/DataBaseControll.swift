@@ -52,3 +52,18 @@ func AddThemeTable(ThemeTxt:String){
     }
 }
 
+func GetPostTable(completion: @escaping ([String: Any]?, Error?) -> Void) {
+    db.collection("Post").getDocuments { (querySnapshot, error) in
+        if let error = error {
+            print("Error getting documents: \(error)")
+        } else {
+            var postData: [String: Any] = [:]
+            for document in querySnapshot!.documents {
+                postData[document.documentID] = document.data()
+                //print("\(document.documentID) => \(document.data())")
+            }
+            completion(postData, nil)
+        }
+    }
+}
+

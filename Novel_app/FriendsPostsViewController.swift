@@ -13,7 +13,7 @@ class FriendsPostsViewCell: UICollectionViewCell {
         let lbl = UILabel()
         lbl.translatesAutoresizingMaskIntoConstraints = false
         lbl.textAlignment = .center
-        lbl.textColor = .white
+        lbl.textColor = .black
         lbl.font = UIFont.systemFont(ofSize: 24)
         return lbl
     }()
@@ -44,7 +44,7 @@ class FriendsPostsViewController:UIViewController, UICollectionViewDataSource, U
     
     let cellIdentifier = "Cell"
     let colors: [UIColor] = [.red, .blue, .green, .yellow, .purple]
-    let textData: [String] = ["First", "Second", "Third", "Fourth", "Fifth"]
+    var textData: [String] = ["First", "Second", "Third", "Fourth", "Fifth"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,16 +54,41 @@ class FriendsPostsViewController:UIViewController, UICollectionViewDataSource, U
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(FriendsPostsViewCell.self, forCellWithReuseIdentifier: cellIdentifier)
+        
+        GetPostTable { (postData, error) in
+            if let error = error {
+                print("Error: \(error)")
+            } else if let postData = postData as? [String: [String: Any]] {
+//                print("Post Data: \(postData)")
+//                print("PostData keys \(postData.keys)")
+                
+                for (documentID, data) in postData {
+                    if let postTxt = data["PostTxt"] as? String {
+                        //print("Document ID: \(documentID), PostTxt: \(postTxt)")
+                        self.textData.append(postTxt)
+                        print(self.textData)
+
+                        
+                    } else {
+                        print("PostTxt not found for document ID: \(documentID)")
+                    }
+                }
+            }
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+
+        }
     }
 
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return colors.count
+        return textData.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: indexPath)as! FriendsPostsViewCell
-        cell.backgroundColor = colors[indexPath.item]
+        //cell.backgroundColor = colors[indexPath.item]
         cell.label.text = textData[indexPath.item]
         return cell
     }
