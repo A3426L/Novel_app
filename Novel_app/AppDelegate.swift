@@ -12,8 +12,13 @@ import FirebaseAuth
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+
+       
+        
         FirebaseApp.configure()
         
         Auth.auth().signInAnonymously() { (authResult, error) in
@@ -28,6 +33,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         return true
     }
+    
+
 
     // MARK: UISceneSession Lifecycle
 
@@ -45,4 +52,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
 }
+
 

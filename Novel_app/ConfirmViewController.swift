@@ -19,6 +19,10 @@ class ConfirmViewController: UIViewController {
         Label.text = ReceivedData
         print(ReceivedData)
     }
+    
+    @IBAction func TapedPostButton(){
+        let isPostKey = UserDefaults.standard.bool(forKey: "isPostKey")
+    }
 
     
     

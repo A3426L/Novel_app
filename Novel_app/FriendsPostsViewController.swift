@@ -44,7 +44,7 @@ class FriendsPostsViewController:UIViewController, UICollectionViewDataSource, U
     
     let cellIdentifier = "Cell"
     let colors: [UIColor] = [.red, .blue, .green, .yellow, .purple]
-    var textData: [String] = ["First", "Second", "Third", "Fourth", "Fifth"]
+    var textData: [String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -80,6 +80,29 @@ class FriendsPostsViewController:UIViewController, UICollectionViewDataSource, U
 
         }
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if !isPost() {
+            print("not post")
+            let nextView = storyboard?.instantiateViewController(withIdentifier: "ViewController") as! ViewController
+            nextView.modalPresentationStyle = .fullScreen
+            present(nextView, animated: true, completion: nil)
+            
+        }else{
+            print("post")
+        }
+
+    }
+    
+    func isPost() -> Bool{
+        let isPostKey = UserDefaults.standard.bool(forKey: "isPostKey")
+        if !isPostKey{
+            UserDefaults.standard.set(true,forKey: "isPostKey")
+            return false
+        }
+        return true
+    }
 
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -112,3 +135,4 @@ class FriendsPostsViewController:UIViewController, UICollectionViewDataSource, U
         targetContentOffset.pointee = CGPoint(x: 0, y: CGFloat(index) * cellHeightIncludingSpacing)
     }
 }
+
