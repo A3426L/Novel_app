@@ -11,19 +11,19 @@ class TabBarController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        delegate = self
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+}
+extension TabBarController: UITabBarControllerDelegate {
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        // TabBarItemタップでModal表示をする画面を指定して実装
+        if viewController is PostViewController {
+            if let newVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PostViewController") as? PostViewController {
+                newVC.modalPresentationStyle = .fullScreen
+                tabBarController.present(newVC, animated: true, completion: nil)
+                return false
+            }
+        }
+        return true
     }
-    */
-
 }

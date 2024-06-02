@@ -7,7 +7,7 @@
 
 import UIKit
 
-class FirstStartViewController: UIViewController {
+class FirstStartViewController: UIViewController , UITextFieldDelegate {
     
     @IBOutlet var Label:UILabel!
     @IBOutlet var NameBox:UITextField!
@@ -16,10 +16,21 @@ class FirstStartViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        NameBox.delegate = self
+        //reset()
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
     
     
     @IBAction func TappedButton(){
+        var name:String = NameBox.text ?? "名無し"
+        let dict:[String : Any] = ["Name": name]
+        UserDefaults.standard.set(dict, forKey: "UserInfo")
+        print(dict)
         dismiss(animated: true, completion: nil)
         
     }

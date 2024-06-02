@@ -14,12 +14,27 @@ import FirebaseAuth
 
 class ViewController: UIViewController {
 
+    var themeTxt = ""
+    @IBOutlet var Label:UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        let date = Date()
+        GetThemeTxt(forDate: date){ ThemeTxt in
+            if let ThemeTxt = ThemeTxt {
+                print("Date: \(date), ThemeTxt: \(ThemeTxt)")
+                self.themeTxt = ThemeTxt
+                DispatchQueue.main.async {
+                    self.Label.text = ThemeTxt
+                }
+            }
+        }
     }
+    
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
         if isFirstLaunch() {
             print("first launch")
             let nextView = storyboard?.instantiateViewController(withIdentifier: "FirstStartViewController") as! FirstStartViewController
@@ -32,6 +47,7 @@ class ViewController: UIViewController {
 
     }
     
+    
     func isFirstLaunch() -> Bool{
         let firstLunchKey = UserDefaults.standard.bool(forKey: "firstLunchKey")
         if !firstLunchKey{
@@ -42,7 +58,8 @@ class ViewController: UIViewController {
         //UserDefaults.standard.set(false,forKey: "firstLunchKey")
         return false
     }
-       //AddPostTable(UserID: "test", ThemeID: "test", PostTxt: "疲れたなあああああ", Range:0)
+    
+       
         
 }
 
