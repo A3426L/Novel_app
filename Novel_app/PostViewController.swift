@@ -17,37 +17,42 @@ class PostViewController: UIViewController , UITextViewDelegate {
     var inputData: String?
     var ThemeTxt = "取得失敗！"
     
+    var characterCountLabel: UILabel!
+
+    
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let date = Date()
-        GetThemeTxt(forDate: date){ ThemeTxt in
-            if let ThemeTxt = ThemeTxt {
-                print("Date: \(date), ThemeTxt: \(ThemeTxt)")
-                self.ThemeTxt = ThemeTxt
-                DispatchQueue.main.async {
-                    self.textview.text = ThemeTxt
-                }
-            }
-        }
+        textview.text = GetTxt
         
         textview.delegate = self
         textview.becomeFirstResponder()
+        
+        characterCountLabel = UILabel()
+        characterCountLabel.text = String(GetTxt.count)
+        characterCountLabel.sizeToFit()
+        characterCountLabel.frame.size.width += 10
+
+        let countBarButtonItem = UIBarButtonItem(customView: characterCountLabel)
+
         
         let toolbar = UIToolbar()
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
                                     target: nil,
                                     action: nil)
-        let done = UIBarButtonItem(title: "完了",
-                                   style: .done,
-                                   target: self,
-                                   action: #selector(didTapDoneButton))
-        toolbar.items = [space, done]
+        
+        toolbar.items = [space, countBarButtonItem]
         
         toolbar.sizeToFit()
         textview.inputAccessoryView = toolbar
+        
+        toolbar.translatesAutoresizingMaskIntoConstraints = false
+        characterCountLabel.translatesAutoresizingMaskIntoConstraints = false
+        textview.translatesAutoresizingMaskIntoConstraints = false
+        
+        
+
     }
     
     @objc func didTapDoneButton() {
@@ -64,6 +69,15 @@ class PostViewController: UIViewController , UITextViewDelegate {
         //nextView.modalPresentationStyle = .fullScreen
         present(nextView, animated: true, completion: nil)
         
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        updateCharacterCount()
+    }
+
+    func updateCharacterCount() {
+        let count = textview.text.count
+        characterCountLabel.text = "\(count)"
     }
 }
 

@@ -19,7 +19,7 @@ extension TabBarController: UITabBarControllerDelegate {
         // TabBarItemタップでModal表示をする画面を指定して実装
         if viewController is PostViewController {
             if let newVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PostViewController") as? PostViewController {
-                newVC.modalPresentationStyle = .fullScreen
+                //newVC.modalPresentationStyle = .fullScreen
                 tabBarController.present(newVC, animated: true, completion: nil)
                 return false
             }

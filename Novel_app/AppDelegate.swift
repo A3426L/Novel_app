@@ -15,7 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        reset()
+        //reset()
        
         
         FirebaseApp.configure()
@@ -29,6 +29,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
              let uid = user.uid
             return
         }
+        
+
         
         return true
     }

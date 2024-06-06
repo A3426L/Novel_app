@@ -14,21 +14,22 @@ import FirebaseAuth
 
 class ViewController: UIViewController {
 
-    var themeTxt = ""
+    var themeTxt = "こんにちは　今日も一文"
     @IBOutlet var Label:UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         let date = Date()
-        GetThemeTxt(forDate: date){ ThemeTxt in
-            if let ThemeTxt = ThemeTxt {
-                print("Date: \(date), ThemeTxt: \(ThemeTxt)")
-                self.themeTxt = ThemeTxt
-                DispatchQueue.main.async {
-                    self.Label.text = ThemeTxt
-                }
-            }
-        }
+//        GetThemeTxt(forDate: date){ ThemeTxt in
+//            if let ThemeTxt = ThemeTxt {
+//                print("Date: \(date), ThemeTxt: \(ThemeTxt)")
+//                self.themeTxt = ThemeTxt
+//                DispatchQueue.main.async {
+//                    self.Label.text = ThemeTxt
+//                }
+//            }
+//        }
+        Label.text = themeTxt
     }
     
     
