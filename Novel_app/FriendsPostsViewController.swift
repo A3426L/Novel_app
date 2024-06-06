@@ -26,7 +26,7 @@ class FriendsPostsViewCell: UICollectionViewCell {
         txv.textColor = .black
         txv.isEditable = false
         txv.isSelectable = false
-        txv.font = UIFont.systemFont(ofSize: 30)
+        txv.font = UIFont.boldSystemFont(ofSize: 30)
         return txv
     }()
     
@@ -40,19 +40,19 @@ class FriendsPostsViewCell: UICollectionViewCell {
 //        return label
 //    }()
     
-//    let bottomRightLabel: UILabel = {
-//        let label = UILabel()
-//        label.translatesAutoresizingMaskIntoConstraints = false
-//        label.textAlignment = .right
-//        label.textColor = .black
-//        label.font = UIFont.systemFont(ofSize: 16)
-//        label.text = "Bottom Right"
-//        return label
-//    }()
+    let bottomRightLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textAlignment = .right
+        label.textColor = .black
+        label.font = UIFont.boldSystemFont(ofSize: 30)
+        return label
+    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.addSubview(TextView)
+        contentView.addSubview(bottomRightLabel)
 //        contentView.addSubview(bottomRightLabel)
         //addSubview(topLeftLabel)
         
@@ -65,20 +65,41 @@ class FriendsPostsViewCell: UICollectionViewCell {
 //            topLeftLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8),
 //            topLeftLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8)
             
-//            bottomRightLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-//            bottomRightLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20)
+            bottomRightLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -40),
+            bottomRightLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -60)
         ])
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+                contentView.addGestureRecognizer(tapGesture)
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         contentView.addSubview(TextView)
+        contentView.addSubview(bottomRightLabel)
         NSLayoutConstraint.activate([
             TextView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            TextView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            TextView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor,constant: -20),
             TextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.8),
-            TextView.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 0.8)
+            TextView.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 0.8),
+            
+            bottomRightLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -40),
+            bottomRightLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -60)
         ])
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+                contentView.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc func handleTap() {
+        guard let collectionView = superview as? UICollectionView else { return }
+        guard let indexPath = collectionView.indexPath(for: self) else { return }
+        
+        let nextItem = indexPath.item + 1
+        print(nextItem)
+        if nextItem < collectionView.numberOfItems(inSection: indexPath.section) {
+            let nextIndexPath = IndexPath(item: nextItem, section: indexPath.section)
+            collectionView.scrollToItem(at: nextIndexPath, at: .centeredVertically, animated: true)
+        }
     }
 }
 
@@ -91,6 +112,7 @@ class FriendsPostsViewController:UIViewController, UICollectionViewDataSource, U
     let colors: [UIColor] = [.red, .blue, .green, .yellow, .purple]
     //var textData: [String:String] = [:]
     var textData:[String] = []
+    var userData:[String] = []
     
     
     override func viewDidLoad() {
@@ -121,6 +143,7 @@ class FriendsPostsViewController:UIViewController, UICollectionViewDataSource, U
                                 print("UserID: \(targetUserID), UserName: \(userName)")
                                 //self.textData([postTxt : userName])
                                 self.textData.append(postTxt)
+                                self.userData.append(userName)
                                 DispatchQueue.main.async {
                                     self.collectionView.reloadData()
                                 }
@@ -170,6 +193,7 @@ class FriendsPostsViewController:UIViewController, UICollectionViewDataSource, U
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: indexPath)as! FriendsPostsViewCell
         //cell.backgroundColor = colors[indexPath.item]
         cell.TextView.text = textData[indexPath.item]
+        cell.bottomRightLabel.text = userData[indexPath.item]
         //let values = Array(textData.values)
         //print(values)
         //cell.TextView.text = values[indexPath.item]
