@@ -20,6 +20,16 @@ class FriendsPostsViewCell: UICollectionViewCell {
         return txv
     }()
     
+//    let topLeftLabel: UILabel = {
+//        let label = UILabel()
+//        label.translatesAutoresizingMaskIntoConstraints = false
+//        label.textAlignment = .left
+//        label.textColor = .darkGray
+//        label.font = UIFont.boldSystemFont(ofSize: 44)
+//        label.text = "友達"
+//        return label
+//    }()
+    
     let bottomRightLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -33,12 +43,17 @@ class FriendsPostsViewCell: UICollectionViewCell {
         super.init(frame: frame)
         contentView.addSubview(TextView)
         contentView.addSubview(bottomRightLabel)
+//        contentView.addSubview(bottomRightLabel)
+        //addSubview(topLeftLabel)
         
         NSLayoutConstraint.activate([
             TextView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             TextView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             TextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.8),
             TextView.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 0.5),
+            
+//            topLeftLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8),
+//            topLeftLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8)
             
             bottomRightLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -40),
             bottomRightLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -60)
