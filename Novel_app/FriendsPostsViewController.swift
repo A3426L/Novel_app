@@ -103,13 +103,13 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
         view.addSubview(collectionView)
         
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.topAnchor), // 修正：safeAreaLayoutGuide.topAnchorからview.topAnchorに変更
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
         
-        collectionView.contentInsetAdjustmentBehavior = .never // スクロールビューのコンテンツインセットの調整を無効にする
+        collectionView.contentInsetAdjustmentBehavior = .never
         
         GetPostTable { (postData, error) in
             if let error = error {
@@ -139,7 +139,7 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         safeAreaInsets = view.safeAreaInsets
-        collectionView.contentInset.top = statusBarHeight // スクロールビューのコンテンツインセットの上部をステータスバーの高さに設定
+        collectionView.contentInset.top = statusBarHeight
         if !isPost() {
             let nextView = storyboard?.instantiateViewController(withIdentifier: "ViewController") as! ViewController
             nextView.modalPresentationStyle = .fullScreen
@@ -169,7 +169,7 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         cellWidth = viewWidth - 40
-        // セル間のスペースを考慮して高さを調整
+        
         cellHeight = viewHeight - navHeight - tabBarHeight - safeAreaInsets.top - safeAreaInsets.bottom - statusBarHeight -  100
         return CGSize(width: cellWidth, height: cellHeight)
     }
@@ -208,7 +208,7 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
         
         targetContentOffset.pointee = CGPoint(x: 0, y: newYOffset)
         
-        // スクロールをアニメーションさせる
+        
         UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
             scrollView.contentOffset = CGPoint(x: 0, y: newYOffset)
         })
@@ -245,7 +245,8 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
             UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
                 scrollView.contentOffset = CGPoint(x: 0, y: newYOffset)
             }, completion: { _ in
-                // セルのアルファ値をリセット
+                
+                
                 self.collectionView.visibleCells.forEach { cell in
                     cell.alpha = 1.0
                 }
