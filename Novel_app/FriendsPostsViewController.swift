@@ -20,16 +20,6 @@ class FriendsPostsViewCell: UICollectionViewCell {
         return txv
     }()
     
-//    let topLeftLabel: UILabel = {
-//        let label = UILabel()
-//        label.translatesAutoresizingMaskIntoConstraints = false
-//        label.textAlignment = .left
-//        label.textColor = .darkGray
-//        label.font = UIFont.boldSystemFont(ofSize: 44)
-//        label.text = "友達"
-//        return label
-//    }()
-    
     let bottomRightLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -43,8 +33,6 @@ class FriendsPostsViewCell: UICollectionViewCell {
         super.init(frame: frame)
         contentView.addSubview(TextView)
         contentView.addSubview(bottomRightLabel)
-//        contentView.addSubview(bottomRightLabel)
-        //addSubview(topLeftLabel)
         
         NSLayoutConstraint.activate([
             TextView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -52,200 +40,241 @@ class FriendsPostsViewCell: UICollectionViewCell {
             TextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.8),
             TextView.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 0.5),
             
-//            topLeftLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-//            topLeftLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8)
-            
             bottomRightLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -40),
             bottomRightLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -60)
         ])
-        
-//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
-//                contentView.addGestureRecognizer(tapGesture)
         
         TextView.layer.cornerRadius = 12
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        contentView.addSubview(TextView)
-        contentView.addSubview(bottomRightLabel)
-        NSLayoutConstraint.activate([
-            TextView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            TextView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor,constant: -20),
-            TextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.8),
-            TextView.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 0.8),
-            
-            bottomRightLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -40),
-            bottomRightLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -60)
-        ])
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
-                contentView.addGestureRecognizer(tapGesture)
-        
-    }
-    
-    @objc func handleTap() {
-        guard let collectionView = superview as? UICollectionView else { return }
-        guard let indexPath = collectionView.indexPath(for: self) else { return }
-        
-        let nextItem = indexPath.item + 1
-        print(nextItem)
-        if nextItem < collectionView.numberOfItems(inSection: indexPath.section) {
-            let nextIndexPath = IndexPath(item: nextItem, section: indexPath.section)
-            collectionView.scrollToItem(at: nextIndexPath, at: .centeredVertically, animated: true)
-        }
     }
 }
 
-class FriendsPostsViewController:UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout  {
+class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    @IBOutlet weak var collectionView: UICollectionView!
+    var collectionView: UICollectionView!
     
     var viewWidth: CGFloat!
     var viewHeight: CGFloat!
     var cellWidth: CGFloat!
     var cellHeight: CGFloat!
-    var cellOffset: CGFloat!
     var navHeight: CGFloat!
     var tabBarHeight: CGFloat!
     var safeAreaInsets: UIEdgeInsets!
+    var statusBarHeight: CGFloat!
     
     let cellIdentifier = "Cell"
-    let colors: [UIColor] = [.red, .blue, .green, .yellow, .purple]
-    //var textData: [String:String] = [:]
-    var textData:[String] = []
-    var userData:[String] = []
-    
-    
+    var textData: [String] = []
+    var userData: [String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         viewWidth = view.frame.width
         viewHeight = view.frame.height
-//        viewWidth = view.safeAreaLayoutGuide.layoutFrame.width
-//        viewHeight = view.safeAreaLayoutGuide.layoutFrame.height
         
-        navHeight = self.navigationController?.navigationBar.frame.size.height
+        navHeight = self.navigationController?.navigationBar.frame.size.height ?? 0
         tabBarHeight = self.tabBarController?.tabBar.frame.size.height ?? 0
         
-        collectionView.isPagingEnabled = true
+        
+        if let statusBarManager = view.window?.windowScene?.statusBarManager {
+            statusBarHeight = statusBarManager.statusBarFrame.height
+        } else {
+            statusBarHeight = 0
+        }
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 20
+        layout.minimumInteritemSpacing = 0
+        
+        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.isPagingEnabled = false
+        collectionView.decelerationRate = .fast
         collectionView.showsVerticalScrollIndicator = false
         collectionView.backgroundColor = .white
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(FriendsPostsViewCell.self, forCellWithReuseIdentifier: cellIdentifier)
         
+        view.addSubview(collectionView)
+        
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor), // 修正：safeAreaLayoutGuide.topAnchorからview.topAnchorに変更
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+        
+        collectionView.contentInsetAdjustmentBehavior = .never // スクロールビューのコンテンツインセットの調整を無効にする
         
         GetPostTable { (postData, error) in
             if let error = error {
                 print("Error: \(error)")
             } else if let postData = postData as? [String: [String: Any]] {
-//                print("Post Data: \(postData)")
-//                print("PostData keys \(postData.keys)")
-                
-                for (documentID, data) in postData {
-                    if let postTxt = data["PostTxt"] as? String {
-                        //print("Document ID: \(documentID), PostTxt: \(postTxt)")
-                        //self.textData.append(postTxt)
-                        let targetUserID = data["UserID"] as! String
-                        print(targetUserID)
+                for (_, data) in postData {
+                    if let postTxt = data["PostTxt"] as? String, let targetUserID = data["UserID"] as? String {
                         GetUserName(forUserID: targetUserID) { userName in
                             if let userName = userName {
-                                print("UserID: \(targetUserID), UserName: \(userName)")
-                                //self.textData([postTxt : userName])
                                 self.textData.append(postTxt)
                                 self.userData.append(userName)
                                 DispatchQueue.main.async {
                                     self.collectionView.reloadData()
                                 }
-
                             } else {
                                 print("UserName not found for UserID: \(targetUserID)")
                             }
                         }
                     } else {
-                        print("PostTxt not found for document ID: \(documentID)")
+                        print("PostTxt not found or UserID not found")
                     }
                 }
             }
-
-
         }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         safeAreaInsets = view.safeAreaInsets
+        collectionView.contentInset.top = statusBarHeight // スクロールビューのコンテンツインセットの上部をステータスバーの高さに設定
         if !isPost() {
-            print("not post")
             let nextView = storyboard?.instantiateViewController(withIdentifier: "ViewController") as! ViewController
             nextView.modalPresentationStyle = .fullScreen
             present(nextView, animated: true, completion: nil)
-            
-        }else{
-            print("post")
         }
-
     }
     
-    func isPost() -> Bool{
+    func isPost() -> Bool {
         let isPostKey = UserDefaults.standard.bool(forKey: "isPostKey")
-        if !isPostKey{
-            return false
-        }
-        return true
+        return isPostKey
     }
-
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return textData.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: indexPath)as! FriendsPostsViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: indexPath) as! FriendsPostsViewCell
         
         cell.backgroundColor = .orange
-        
         cell.TextView.text = textData[indexPath.item]
-        //cell.TextView.backgroundColor = colors[indexPath.item]
+        cell.TextView.backgroundColor = .orange
         cell.bottomRightLabel.text = userData[indexPath.item]
         cell.layer.cornerRadius = 15
-        //let values = Array(textData.values)
-        //print(values)
-        //cell.TextView.text = values[indexPath.item]
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        return CGSize(width: view.frame.width, height: view.frame.height - 150)
-        
-        cellWidth = viewWidth-30
-        let safeAreaTop = safeAreaInsets.top
-        let safeAreaBottom = safeAreaInsets.bottom
-        cellHeight = viewHeight  - tabBarHeight - safeAreaTop - safeAreaBottom
-        cellOffset = viewWidth-cellWidth
+        cellWidth = viewWidth - 40
+        // セル間のスペースを考慮して高さを調整
+        cellHeight = viewHeight - navHeight - tabBarHeight - safeAreaInsets.top - safeAreaInsets.bottom - statusBarHeight -  100
         return CGSize(width: cellWidth, height: cellHeight)
     }
     
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        
         let layout = self.collectionView.collectionViewLayout as! UICollectionViewFlowLayout
         let cellHeightIncludingSpacing = cellHeight + layout.minimumLineSpacing
-        var offset = targetContentOffset.pointee.y
-        let index = (offset + scrollView.contentInset.top + safeAreaInsets.top) / cellHeightIncludingSpacing
-        let roundedIndex = round(index)
+        let yOffset = scrollView.contentOffset.y
+        let index = (yOffset + scrollView.contentInset.top) / cellHeightIncludingSpacing
+        var roundedIndex = round(index)
         
-        offset = roundedIndex * cellHeightIncludingSpacing - (scrollView.contentInset.top - safeAreaInsets.top)
+//        if velocity.y == 0 {
+//            if yOffset - roundedIndex * cellHeightIncludingSpacing > cellHeightIncludingSpacing / 2 {
+//                roundedIndex += 1
+//            } else if roundedIndex * cellHeightIncludingSpacing - yOffset > cellHeightIncludingSpacing / 2 {
+//                roundedIndex -= 1
+//            }
+//        }
         
-        offset = max(0, offset - tabBarHeight)
-        targetContentOffset.pointee = CGPoint(x: 0, y: offset)
+        if velocity.y > 0.3 {
+            roundedIndex = ceil(index)
+        } else if velocity.y < -0.3 {
+            roundedIndex = floor(index)
+        } else {
+            roundedIndex = round(index)
+        }
+        
+        if roundedIndex < 0 {
+            roundedIndex = 0
+        } else if roundedIndex >= CGFloat(textData.count) {
+            roundedIndex = CGFloat(textData.count) - 1
+        }
+        
+        
+        let newYOffset = roundedIndex * cellHeightIncludingSpacing - scrollView.contentInset.top
+        
+        targetContentOffset.pointee = CGPoint(x: 0, y: newYOffset)
+        
+        // スクロールをアニメーションさせる
+        UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
+            scrollView.contentOffset = CGPoint(x: 0, y: newYOffset)
+        })
     }
     
-    func scrollView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets()
-        }
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        adjustScrollViewOffset(scrollView, animated: true)
+    }
     
-
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate {
+            adjustScrollViewOffset(scrollView, animated: true)
+        }
+    }
+    
+    private func adjustScrollViewOffset(_ scrollView: UIScrollView, animated: Bool) {
+        let layout = self.collectionView.collectionViewLayout as! UICollectionViewFlowLayout
+        let cellHeightIncludingSpacing = cellHeight + layout.minimumLineSpacing
+        let yOffset = scrollView.contentOffset.y
+        let index = (yOffset + scrollView.contentInset.top) / cellHeightIncludingSpacing
+        var roundedIndex = round(index)
+        
+        
+        if roundedIndex < 0 {
+            roundedIndex = 0
+        } else if roundedIndex >= CGFloat(textData.count) {
+            roundedIndex = CGFloat(textData.count) - 1
+        }
+        
+        
+        let newYOffset = roundedIndex * cellHeightIncludingSpacing - scrollView.contentInset.top
+        
+        if animated {
+            UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
+                scrollView.contentOffset = CGPoint(x: 0, y: newYOffset)
+            }, completion: { _ in
+                // セルのアルファ値をリセット
+                self.collectionView.visibleCells.forEach { cell in
+                    cell.alpha = 1.0
+                }
+            })
+        } else {
+            scrollView.setContentOffset(CGPoint(x: 0, y: newYOffset), animated: false)
+            self.collectionView.visibleCells.forEach { cell in
+                cell.alpha = 1.0
+            }
+        }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let visibleCells = collectionView.visibleCells
+        let cellHeightIncludingSpacing = cellHeight + (collectionView.collectionViewLayout as! UICollectionViewFlowLayout).minimumLineSpacing
+        let yOffset = scrollView.contentOffset.y
+        
+        visibleCells.forEach { cell in
+            let cellCenter = cell.center.y
+            let distanceFromCenter = abs(cellCenter - yOffset - scrollView.frame.height / 2)
+            let alpha = max(0, 1 - (distanceFromCenter / cellHeightIncludingSpacing))
+            //cell.alpha = alpha
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        //return .zero
+        return UIEdgeInsets(top: 100, left: 0, bottom: 0, right: 0)
+    }
 }
+
 

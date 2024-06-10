@@ -154,9 +154,6 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="home" image="house" catalog="system" selectedImage="house.fill" id="oRg-pI-V7i"/>
-                    <connections>
-                        <outlet property="collectionView" destination="2MN-TP-SoE" id="Cz9-nQ-u2z"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Xuf-Nx-Ypg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
