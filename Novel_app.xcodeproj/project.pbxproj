@@ -21,6 +21,7 @@
 		72313BE22C00ADD900F26806 /* DataBaseControll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72313BE12C00ADD900F26806 /* DataBaseControll.swift */; };
 		72450AFC2C0B181600AAD51E /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72450AFB2C0B181600AAD51E /* TestViewController.swift */; };
 		7255CEE22C04B75100DDDF39 /* FriendsPostsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7255CEE12C04B75100DDDF39 /* FriendsPostsViewController.swift */; };
+		72935F352C18C82800270418 /* AccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72935F342C18C82800270418 /* AccountViewController.swift */; };
 		72C82F832C07282700088BDC /* FirstStartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72C82F822C07282700088BDC /* FirstStartViewController.swift */; };
 		72E31AA72C0B0F2E00B5CCBF /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E31AA62C0B0F2E00B5CCBF /* TabBarController.swift */; };
 /* End PBXBuildFile section */
@@ -40,6 +41,7 @@
 		72313BE12C00ADD900F26806 /* DataBaseControll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBaseControll.swift; sourceTree = "<group>"; };
 		72450AFB2C0B181600AAD51E /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
 		7255CEE12C04B75100DDDF39 /* FriendsPostsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsPostsViewController.swift; sourceTree = "<group>"; };
+		72935F342C18C82800270418 /* AccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewController.swift; sourceTree = "<group>"; };
 		72C82F822C07282700088BDC /* FirstStartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstStartViewController.swift; sourceTree = "<group>"; };
 		72E31AA62C0B0F2E00B5CCBF /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -86,6 +88,7 @@
 				722CD4002C022AB2001A8793 /* ConfirmViewController.swift */,
 				72E31AA62C0B0F2E00B5CCBF /* TabBarController.swift */,
 				7255CEE12C04B75100DDDF39 /* FriendsPostsViewController.swift */,
+				72935F342C18C82800270418 /* AccountViewController.swift */,
 				72313BE12C00ADD900F26806 /* DataBaseControll.swift */,
 				72313BCB2BFF7A0600F26806 /* Main.storyboard */,
 				72313BCE2BFF7A0700F26806 /* Assets.xcassets */,
@@ -192,6 +195,7 @@
 				72313BC82BFF7A0600F26806 /* SceneDelegate.swift in Sources */,
 				7255CEE22C04B75100DDDF39 /* FriendsPostsViewController.swift in Sources */,
 				722CD3FF2C02206F001A8793 /* PostViewController.swift in Sources */,
+				72935F352C18C82800270418 /* AccountViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

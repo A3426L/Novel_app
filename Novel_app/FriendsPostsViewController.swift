@@ -68,9 +68,15 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
     let cellIdentifier = "Cell"
     var textData: [String] = []
     var userData: [String] = []
+    var colorData:[String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        self.title = "Home"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.barTintColor = .white
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.black]
         
         viewWidth = view.frame.width
         viewHeight = view.frame.height
@@ -85,9 +91,11 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
             statusBarHeight = 0
         }
         
+
+        
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 20
+        layout.minimumLineSpacing = 80
         layout.minimumInteritemSpacing = 0
         
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -111,16 +119,22 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
         
         collectionView.contentInsetAdjustmentBehavior = .never
         
+        //
+        safeAreaInsets = view.safeAreaInsets
+        collectionView.contentInset.top = statusBarHeight
+        //
+        
         GetPostTable { (postData, error) in
             if let error = error {
                 print("Error: \(error)")
             } else if let postData = postData as? [String: [String: Any]] {
                 for (_, data) in postData {
-                    if let postTxt = data["PostTxt"] as? String, let targetUserID = data["UserID"] as? String {
+                    if let postTxt = data["PostTxt"] as? String, let targetUserID = data["UserID"] as? String,let Color = data["Color"] as? String{
                         GetUserName(forUserID: targetUserID) { userName in
                             if let userName = userName {
                                 self.textData.append(postTxt)
                                 self.userData.append(userName)
+                                self.colorData.append(Color)
                                 DispatchQueue.main.async {
                                     self.collectionView.reloadData()
                                 }
@@ -147,6 +161,12 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
         }
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        safeAreaInsets = view.safeAreaInsets
+        collectionView.contentInset.top = statusBarHeight
+    }
+    
     func isPost() -> Bool {
         let isPostKey = UserDefaults.standard.bool(forKey: "isPostKey")
         return isPostKey
@@ -158,19 +178,31 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: indexPath) as! FriendsPostsViewCell
-        
-        cell.backgroundColor = .orange
+        let color:UIColor!
+        if colorData[indexPath.item] == "Yellow"{
+            color = UIColor(red: 1.0, green: 1.0, blue: 0.8, alpha: 1.0)
+        }else if colorData[indexPath.item] == "Blue"{
+            color = UIColor(red: 0.7, green: 0.8, blue: 1.0, alpha: 1.0)
+        }else if colorData[indexPath.item] == "Pink"{
+            color = UIColor(red: 1.0, green: 0.8, blue: 0.8, alpha: 1.0)
+        }else if colorData[indexPath.item] == "Green"{
+            color = UIColor(red: 0.8, green: 1.0, blue: 0.8, alpha: 1.0)
+        }else{
+            color = .white
+        }
+        cell.backgroundColor = color
         cell.TextView.text = textData[indexPath.item]
-        cell.TextView.backgroundColor = .orange
+        cell.TextView.backgroundColor = color
         cell.bottomRightLabel.text = userData[indexPath.item]
-        cell.layer.cornerRadius = 15
+        cell.layer.cornerRadius = 50
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         cellWidth = viewWidth - 40
         
-        cellHeight = viewHeight - navHeight - tabBarHeight - safeAreaInsets.top - safeAreaInsets.bottom - statusBarHeight -  100
+        cellHeight = viewHeight - navHeight - tabBarHeight - safeAreaInsets.top - safeAreaInsets.bottom - statusBarHeight
+        cellHeight += 80
         return CGSize(width: cellWidth, height: cellHeight)
     }
     
@@ -274,7 +306,7 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         //return .zero
-        return UIEdgeInsets(top: 100, left: 0, bottom: 0, right: 0)
+        return UIEdgeInsets(top: 150, left: 0, bottom: 0, right: 0)
     }
 }
 

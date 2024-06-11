@@ -17,7 +17,7 @@ class FirstStartViewController: UIViewController , UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         NameBox.delegate = self
-        //reset()
+            //reset()
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

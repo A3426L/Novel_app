@@ -11,13 +11,14 @@ import FirebaseFirestore
 
 let db = Firestore.firestore()
 
-func AddPostTable(UserID:String,ThemeID:String,PostTxt:String,Range: Int){
+func AddPostTable(UserID:String,ThemeID:String,PostTxt:String,Color:String,Range: Int){
     db.collection("Post").addDocument(data: [
         "UserID": UserID,
         "ThemeID":ThemeID,
         "PostTxt":PostTxt,
         "Range":Range, //0->全体公開,1->友達まで,2->自分だけ
-        "CreatedAt":Date()
+        "CreatedAt":Date(),
+        "Color":Color
     ]) { err in
         if let err = err {
             print("Error writing AddPost: \(err)")

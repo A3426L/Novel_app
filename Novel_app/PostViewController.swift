@@ -9,11 +9,22 @@ import UIKit
 import FirebaseCore
 import FirebaseFirestore
 
+protocol ColorButtonViewDelegate: AnyObject {
+    func colorButtonView(_ view: ColorButtonView, didSelectColor color: UIColor)
+}
 
 class ColorButtonView: UIView {
     
+    weak var delegate: ColorButtonViewDelegate?
+
     var buttons: [UIButton] = []
-    let colors: [UIColor] = [.black, .blue, .systemPink]
+//    let colors: [UIColor] = [.systemOrange.withAlphaComponent(0.5), .systemBlue.withAlphaComponent(0.5), .systemPink.withAlphaComponent(0.5)]
+    let colors: [UIColor] = [
+        UIColor(red: 1.0, green: 1.0, blue: 0.8, alpha: 1.0), // パステルイエロー
+        UIColor(red: 0.7, green: 0.8, blue: 1.0, alpha: 1.0), // パステルブルー
+        UIColor(red: 1.0, green: 0.8, blue: 0.8, alpha: 1.0), // パステルピンク
+        UIColor(red: 0.8, green: 1.0, blue: 0.8, alpha: 1.0)  // パステルグリーン
+    ]
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -44,44 +55,52 @@ class ColorButtonView: UIView {
         let totalWidth = CGFloat(colors.count) * (buttonSize + padding) - padding
         self.frame = CGRect(x: 0, y: 0, width: totalWidth, height: buttonSize)
     }
+    
+    
 
     
     @objc private func colorButtonTapped(_ sender: UIButton) {
         let selectedColor = colors[sender.tag]
         print("Selected color: \(selectedColor)")
+        delegate?.colorButtonView(self, didSelectColor: selectedColor)
     }
 }
 
 
-class PostViewController: UIViewController , UITextViewDelegate {
+class PostViewController: UIViewController , UITextViewDelegate, ColorButtonViewDelegate {
     
     @IBOutlet var textview :UITextView!
     @IBOutlet var ConfirmButton :UIButton!
     var inputData: String?
-    var ThemeTxt = "取得失敗！"
+    //var ThemeTxt = "取得失敗！"
     
     var characterCountLabel: UILabel!
+    
+    var themeLabel: UILabel!
 
     
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        textview.text = GetTxt
+        setupThemeLabel(Theme: GetTxt)
         
         textview.delegate = self
         textview.becomeFirstResponder()
         
         characterCountLabel = UILabel()
-        characterCountLabel.text = String(GetTxt.count) + "/30"
+        characterCountLabel.text = "0/30"
         characterCountLabel.sizeToFit()
         characterCountLabel.frame.size.width += 10
 
         let countBarButtonItem = UIBarButtonItem(customView: characterCountLabel)
         
+        let addButton = UIBarButtonItem(title: "完了", style: .plain, target: self, action: #selector(addButtonTapped))
+        navigationItem.rightBarButtonItem = addButton
         
         let colorButtonView = ColorButtonView()
-         colorButtonView.translatesAutoresizingMaskIntoConstraints = false
+        colorButtonView.delegate = self
+        colorButtonView.translatesAutoresizingMaskIntoConstraints = false
          
         let colorButtonViewItem = UIBarButtonItem(customView: colorButtonView)
 
@@ -102,16 +121,63 @@ class PostViewController: UIViewController , UITextViewDelegate {
         textview.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
+            textview.topAnchor.constraint(equalTo: themeLabel.bottomAnchor, constant: 20), // ラベルとテキストビューの間に20ポイントのスペースを追加
+            textview.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            textview.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            textview.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -200)  // テキストビューの下に余白を追加
+        ])
+        
+        NSLayoutConstraint.activate([
             toolbar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             toolbar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             toolbar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
-            colorButtonView.heightAnchor.constraint(equalToConstant: 44), // Adjust height according to the number of buttons and padding
+            colorButtonView.heightAnchor.constraint(equalToConstant: 40), // Adjust height according to the number of buttons and padding
             colorButtonView.widthAnchor.constraint(equalToConstant: colorButtonView.frame.width)   // Adjust width according to button size
         ])
         
         
 
+    }
+    
+    
+    
+    func setupThemeLabel(Theme:String) {
+        themeLabel = UILabel()
+        themeLabel.text = Theme
+        themeLabel.textAlignment = .center
+        themeLabel.font = UIFont.boldSystemFont(ofSize: 24)
+        themeLabel.backgroundColor = UIColor(white: 0.9, alpha: 1)
+        themeLabel.layer.cornerRadius = 12
+        themeLabel.layer.masksToBounds = true
+        themeLabel.translatesAutoresizingMaskIntoConstraints = false
+        themeLabel.numberOfLines = 0
+        view.addSubview(themeLabel)
+        
+//        NSLayoutConstraint.activate([
+//            themeLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+//            themeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//            themeLabel.widthAnchor.constraint(equalToConstant: 200),
+//            themeLabel.heightAnchor.constraint(equalToConstant: 50)
+//        ])
+        NSLayoutConstraint.activate([
+            themeLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            themeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            themeLabel.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
+            themeLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20)
+        ])
+    }
+    
+    @objc func addButtonTapped() {
+        
+        let inputData = GetTxt  + textview.text
+        let color = textview.backgroundColor
+        //print("入力された\(inputData ?? "")")
+        let nextView = storyboard?.instantiateViewController(withIdentifier: "ConfirmViewController") as! ConfirmViewController
+        nextView.ReceivedData = inputData
+        nextView.colorData = color
+        //nextView.modalPresentationStyle = .fullScreen
+        present(nextView, animated: true, completion: nil)
     }
     
     @objc func didTapDoneButton() {
@@ -122,9 +188,11 @@ class PostViewController: UIViewController , UITextViewDelegate {
     
     @IBAction func ConfirmButtonTapped(){
         let inputData = textview.text
+        let color = textview.backgroundColor
         //print("入力された\(inputData ?? "")")
         let nextView = storyboard?.instantiateViewController(withIdentifier: "ConfirmViewController") as! ConfirmViewController
         nextView.ReceivedData = inputData!
+        nextView.colorData = color
         //nextView.modalPresentationStyle = .fullScreen
         present(nextView, animated: true, completion: nil)
         
@@ -150,7 +218,13 @@ class PostViewController: UIViewController , UITextViewDelegate {
 
         return newLength <= maxTextLength
     }
+    
 
+    func colorButtonView(_ view: ColorButtonView, didSelectColor color: UIColor) {
+        print("Delegate method called with color: \(color)")
+        self.view.backgroundColor = color
+        self.textview.backgroundColor = color
+    }
 
 
     func updateCharacterCount() {
@@ -162,5 +236,7 @@ class PostViewController: UIViewController , UITextViewDelegate {
             characterCountLabel.textColor = .label
         }
     }
+    
+    
 }
 
