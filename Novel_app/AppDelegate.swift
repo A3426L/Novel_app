@@ -10,6 +10,8 @@ import Firebase
 import FirebaseFirestore
 import FirebaseAuth
 
+
+var userID:String!
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
@@ -24,11 +26,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if error != nil{
                 print("Auth Error :\(error!.localizedDescription)")
             }
-             guard let user = authResult?.user else { return }
-             let isAnonymous = user.isAnonymous  // true
-             let uid = user.uid
+            guard let user = authResult?.user else { return }
+            //let isAnonymous = user.isAnonymous  // true
+            let uid = user.uid
+            userID = uid
             return
         }
+        
+        DateHandler.shared.clearIsPostIfNeeded()
         
 
         

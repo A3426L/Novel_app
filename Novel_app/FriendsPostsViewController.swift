@@ -5,7 +5,10 @@
 //  Created by aru on 2024/05/27.
 //
 
+
 import UIKit
+import FirebaseCore
+import FirebaseFirestore
 
 class FriendsPostsViewCell: UICollectionViewCell {
     
@@ -16,7 +19,7 @@ class FriendsPostsViewCell: UICollectionViewCell {
         txv.textColor = .black
         txv.isEditable = false
         txv.isSelectable = false
-        txv.font = UIFont.boldSystemFont(ofSize: 30)
+        txv.font = UIFont(name: "Georgia", size: 25)
         return txv
     }()
     
@@ -25,7 +28,7 @@ class FriendsPostsViewCell: UICollectionViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .right
         label.textColor = .black
-        label.font = UIFont.boldSystemFont(ofSize: 30)
+        label.font = UIFont(name: "Georgia", size: 25)
         return label
     }()
     
@@ -56,6 +59,9 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
     
     var collectionView: UICollectionView!
     
+    let customNavigationBar = UIView()
+    let titleLabel = UILabel()
+    
     var viewWidth: CGFloat!
     var viewHeight: CGFloat!
     var cellWidth: CGFloat!
@@ -66,17 +72,22 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
     var statusBarHeight: CGFloat!
     
     let cellIdentifier = "Cell"
-    var textData: [String] = []
-    var userData: [String] = []
-    var colorData:[String] = []
+    var posts: [(text: String, user: String, color: String, date: Date)] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        view.backgroundColor = UIColor(red: 1.0, green: 0.8, blue: 0.8, alpha: 1.0)
+        
+        setupCustomNavigationBar()
+        
         self.title = "Home"
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.barTintColor = .white
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.black]
+        
+        navigationController?.navigationBar.isTranslucent = false
+        navigationController?.navigationBar.backgroundColor = UIColor(red: 1.0, green: 0.8, blue: 0.8, alpha: 1.0)
+        navigationController?.view.backgroundColor = UIColor(red: 1.0, green: 0.8, blue: 0.8, alpha: 1.0)
         
         viewWidth = view.frame.width
         viewHeight = view.frame.height
@@ -84,18 +95,15 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
         navHeight = self.navigationController?.navigationBar.frame.size.height ?? 0
         tabBarHeight = self.tabBarController?.tabBar.frame.size.height ?? 0
         
-        
         if let statusBarManager = view.window?.windowScene?.statusBarManager {
             statusBarHeight = statusBarManager.statusBarFrame.height
         } else {
             statusBarHeight = 0
         }
         
-
-        
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 80
+        layout.minimumLineSpacing = 30
         layout.minimumInteritemSpacing = 0
         
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -103,7 +111,7 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
         collectionView.isPagingEnabled = false
         collectionView.decelerationRate = .fast
         collectionView.showsVerticalScrollIndicator = false
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = UIColor(red: 1.0, green: 0.8, blue: 0.8, alpha: 1.0)
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(FriendsPostsViewCell.self, forCellWithReuseIdentifier: cellIdentifier)
@@ -118,24 +126,48 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
         ])
         
         collectionView.contentInsetAdjustmentBehavior = .never
-        
-        //
         safeAreaInsets = view.safeAreaInsets
         collectionView.contentInset.top = statusBarHeight
-        //
         
+        updateData()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        safeAreaInsets = view.safeAreaInsets
+        collectionView.contentInset.top = statusBarHeight
+        if !isPost() {
+            if let newVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ViewController") as? ViewController {
+                let navController = UINavigationController(rootViewController: newVC)
+                navController.modalPresentationStyle = .fullScreen
+                present(navController, animated: true, completion: nil)
+            }
+        }
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        safeAreaInsets = view.safeAreaInsets
+        collectionView.contentInset.top = statusBarHeight
+    }
+    
+    func updateData() {
         GetPostTable { (postData, error) in
             if let error = error {
                 print("Error: \(error)")
             } else if let postData = postData as? [String: [String: Any]] {
+                self.posts = []
+                
                 for (_, data) in postData {
-                    if let postTxt = data["PostTxt"] as? String, let targetUserID = data["UserID"] as? String,let Color = data["Color"] as? String{
+                    if let postTxt = data["PostTxt"] as? String,
+                       let targetUserID = data["UserID"] as? String,
+                       let color = data["Color"] as? String,
+                       let createdAt = data["CreatedAt"] as? Timestamp {
                         GetUserName(forUserID: targetUserID) { userName in
                             if let userName = userName {
-                                self.textData.append(postTxt)
-                                self.userData.append(userName)
-                                self.colorData.append(Color)
+                                self.posts.append((text: postTxt, user: userName, color: color, date: createdAt.dateValue()))
                                 DispatchQueue.main.async {
+                                    self.posts.sort { $0.date > $1.date } // 最新順にソート
                                     self.collectionView.reloadData()
                                 }
                             } else {
@@ -150,59 +182,42 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
         }
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        safeAreaInsets = view.safeAreaInsets
-        collectionView.contentInset.top = statusBarHeight
-        if !isPost() {
-            let nextView = storyboard?.instantiateViewController(withIdentifier: "ViewController") as! ViewController
-            nextView.modalPresentationStyle = .fullScreen
-            present(nextView, animated: true, completion: nil)
-        }
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        safeAreaInsets = view.safeAreaInsets
-        collectionView.contentInset.top = statusBarHeight
-    }
-    
     func isPost() -> Bool {
         let isPostKey = UserDefaults.standard.bool(forKey: "isPostKey")
         return isPostKey
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return textData.count
+        return posts.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: indexPath) as! FriendsPostsViewCell
-        let color:UIColor!
-        if colorData[indexPath.item] == "Yellow"{
+        let post = posts[indexPath.item]
+        let color: UIColor
+        switch post.color {
+        case "Yellow":
             color = UIColor(red: 1.0, green: 1.0, blue: 0.8, alpha: 1.0)
-        }else if colorData[indexPath.item] == "Blue"{
+        case "Blue":
             color = UIColor(red: 0.7, green: 0.8, blue: 1.0, alpha: 1.0)
-        }else if colorData[indexPath.item] == "Pink"{
-            color = UIColor(red: 1.0, green: 0.8, blue: 0.8, alpha: 1.0)
-        }else if colorData[indexPath.item] == "Green"{
+        case "white":
+            color = .white
+        case "Green":
             color = UIColor(red: 0.8, green: 1.0, blue: 0.8, alpha: 1.0)
-        }else{
+        default:
             color = .white
         }
         cell.backgroundColor = color
-        cell.TextView.text = textData[indexPath.item]
+        cell.TextView.text = post.text
         cell.TextView.backgroundColor = color
-        cell.bottomRightLabel.text = userData[indexPath.item]
+        cell.bottomRightLabel.text = post.user
         cell.layer.cornerRadius = 50
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         cellWidth = viewWidth - 40
-        
-        cellHeight = viewHeight - navHeight - tabBarHeight - safeAreaInsets.top - safeAreaInsets.bottom - statusBarHeight
-        cellHeight += 80
+        cellHeight = viewHeight - navHeight - tabBarHeight - safeAreaInsets.top - safeAreaInsets.bottom - statusBarHeight - 100
         return CGSize(width: cellWidth, height: cellHeight)
     }
     
@@ -212,14 +227,6 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
         let yOffset = scrollView.contentOffset.y
         let index = (yOffset + scrollView.contentInset.top) / cellHeightIncludingSpacing
         var roundedIndex = round(index)
-        
-//        if velocity.y == 0 {
-//            if yOffset - roundedIndex * cellHeightIncludingSpacing > cellHeightIncludingSpacing / 2 {
-//                roundedIndex += 1
-//            } else if roundedIndex * cellHeightIncludingSpacing - yOffset > cellHeightIncludingSpacing / 2 {
-//                roundedIndex -= 1
-//            }
-//        }
         
         if velocity.y > 0.3 {
             roundedIndex = ceil(index)
@@ -231,15 +238,13 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
         
         if roundedIndex < 0 {
             roundedIndex = 0
-        } else if roundedIndex >= CGFloat(textData.count) {
-            roundedIndex = CGFloat(textData.count) - 1
+        } else if roundedIndex >= CGFloat(posts.count) {
+            roundedIndex = CGFloat(posts.count) - 1
         }
-        
         
         let newYOffset = roundedIndex * cellHeightIncludingSpacing - scrollView.contentInset.top
         
         targetContentOffset.pointee = CGPoint(x: 0, y: newYOffset)
-        
         
         UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
             scrollView.contentOffset = CGPoint(x: 0, y: newYOffset)
@@ -263,13 +268,11 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
         let index = (yOffset + scrollView.contentInset.top) / cellHeightIncludingSpacing
         var roundedIndex = round(index)
         
-        
         if roundedIndex < 0 {
             roundedIndex = 0
-        } else if roundedIndex >= CGFloat(textData.count) {
-            roundedIndex = CGFloat(textData.count) - 1
+        } else if roundedIndex >= CGFloat(posts.count) {
+            roundedIndex = CGFloat(posts.count) - 1
         }
-        
         
         let newYOffset = roundedIndex * cellHeightIncludingSpacing - scrollView.contentInset.top
         
@@ -277,8 +280,6 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
             UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
                 scrollView.contentOffset = CGPoint(x: 0, y: newYOffset)
             }, completion: { _ in
-                
-                
                 self.collectionView.visibleCells.forEach { cell in
                     cell.alpha = 1.0
                 }
@@ -300,14 +301,42 @@ class FriendsPostsViewController: UIViewController, UICollectionViewDataSource, 
             let cellCenter = cell.center.y
             let distanceFromCenter = abs(cellCenter - yOffset - scrollView.frame.height / 2)
             let alpha = max(0, 1 - (distanceFromCenter / cellHeightIncludingSpacing))
-            //cell.alpha = alpha
+            cell.alpha = alpha
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        //return .zero
-        return UIEdgeInsets(top: 150, left: 0, bottom: 0, right: 0)
+        return UIEdgeInsets(top: 40, left: 0, bottom: 0, right: 0)
+    }
+    
+    private func setupCustomNavigationBar() {
+        customNavigationBar.backgroundColor = .white
+        customNavigationBar.layer.shadowColor = UIColor.black.cgColor
+        customNavigationBar.layer.shadowOpacity = 0.1
+        customNavigationBar.layer.shadowOffset = CGSize(width: 0, height: 2)
+        customNavigationBar.layer.shadowRadius = 4
+        customNavigationBar.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(customNavigationBar)
+        
+        titleLabel.text = "Home"
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 30)
+        titleLabel.textAlignment = .center
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        customNavigationBar.addSubview(titleLabel)
+        
+        NSLayoutConstraint.activate([
+            customNavigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -20),
+            customNavigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            customNavigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            customNavigationBar.heightAnchor.constraint(equalToConstant: 60),
+            
+            titleLabel.centerXAnchor.constraint(equalTo: customNavigationBar.centerXAnchor),
+            titleLabel.centerYAnchor.constraint(equalTo: customNavigationBar.centerYAnchor)
+        ])
     }
 }
+
+
+
 
 

@@ -41,6 +41,45 @@ func AddUserTable(UserID:String,UserName:String){
     }
 }
 
+func AddOrUpdateUser(UserID: String, UserName: String) {
+    let db = Firestore.firestore()
+    let userCollection = db.collection("User")
+    
+    userCollection.whereField("UserID", isEqualTo: UserID).getDocuments { (querySnapshot, err) in
+        if let err = err {
+            print("Error getting documents: \(err)")
+            return
+        }
+        
+        if let documents = querySnapshot?.documents, !documents.isEmpty {
+            for document in documents {
+                document.reference.updateData([
+                    "UserName": UserName
+                ]) { err in
+                    if let err = err {
+                        print("Error updating document: \(err)")
+                    } else {
+                        print("Document successfully updated!")
+                    }
+                }
+            }
+        } else {
+            userCollection.addDocument(data: [
+                "UserID": UserID,
+                "UserName": UserName
+            ]) { err in
+                if let err = err {
+                    print("Error adding document: \(err)")
+                } else {
+                    print("Document successfully added!")
+                }
+            }
+        }
+    }
+}
+
+
+
 func AddThemeTable(ThemeTxt:String){
     db.collection("Theme").addDocument(data: [
         "ThemeTxt": ThemeTxt
@@ -54,7 +93,22 @@ func AddThemeTable(ThemeTxt:String){
 }
 
 func GetPostTable(completion: @escaping ([String: Any]?, Error?) -> Void) {
-    db.collection("Post").getDocuments { (querySnapshot, error) in
+    db.collection("Post").order(by: "CreatedAt", descending: true).getDocuments { (querySnapshot, error) in
+        if let error = error {
+            print("Error getting documents: \(error)")
+        } else {
+            var userData: [String: Any] = [:]
+            for document in querySnapshot!.documents {
+                userData[document.documentID] = document.data()
+            }
+            completion(userData, nil)
+        }
+    }
+}
+
+
+func GetUserTable(completion: @escaping ([String: Any]?, Error?) -> Void) {
+    db.collection("User").getDocuments { (querySnapshot, error) in
         if let error = error {
             print("Error getting documents: \(error)")
         } else {
@@ -67,6 +121,7 @@ func GetPostTable(completion: @escaping ([String: Any]?, Error?) -> Void) {
         }
     }
 }
+
 
 func GetUserName(forUserID userID: String, completion: @escaping (String?) -> Void) {
     db.collection("User").whereField("UserID", isEqualTo: userID)
@@ -140,6 +195,32 @@ func getRandomThemeTxt(completion: @escaping (String?) -> Void) {
             } else {
                 completion(nil)
             }
+        }
+    }
+}
+
+class DateHandler {
+    static let shared = DateHandler()
+    private let calendar = Calendar.current
+    private let dateKey = "lastCheckDate"
+    private let isPostKey = "isPostKey"
+
+    private init() {}
+
+    func checkAndUpdateDate() {
+        let currentDate = Date()
+        if let lastCheckDate = UserDefaults.standard.object(forKey: dateKey) as? Date {
+            if !calendar.isDate(currentDate, inSameDayAs: lastCheckDate) {
+                UserDefaults.standard.removeObject(forKey: isPostKey)
+            }
+        }
+        UserDefaults.standard.set(currentDate, forKey: dateKey)
+        print(currentDate)
+    }
+
+    func clearIsPostIfNeeded() {
+        if UserDefaults.standard.object(forKey: isPostKey) != nil {
+            checkAndUpdateDate()
         }
     }
 }
